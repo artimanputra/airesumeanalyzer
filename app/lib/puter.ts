@@ -292,7 +292,7 @@ export const usePuterStore = create<PuterStore>((set, get) => {
         return puter.fs.read(path);
     };
 
-    const upload = async (files: File[] | Blob[]) => {
+    const upload = async (files: File[] | Blob[] ) => {
         const puter = getPuter();
         if (!puter) {
             setError("Puter.js not available");
