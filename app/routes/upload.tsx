@@ -38,14 +38,20 @@ const Upload=()=>{
 
         setStatusText("Uploading the image...");
 
-        const imageBlob = imageFile.file as Blob;
+        const imageBlob = imageFile.file;
+
+        if (!(imageBlob instanceof Blob)) {
+            console.error("convertPdfToImage returned invalid blob:", imageBlob);
+            setIsProcessing(false);
+            return setStatusText("Error: Failed to generate image from PDF");
+        }
 
         const imageAsFile = new File(
             [imageBlob],
             "resume-preview.png",
             { type: imageBlob.type || "image/png" }
         );
-        console.log(imageFile.file);
+
         const uploadedImage = await fs.upload([imageAsFile]);
 
         if (!uploadedImage) {
@@ -82,7 +88,6 @@ const Upload=()=>{
         setStatusText('Analysis complete, redirecting...');
         console.log(data);
         navigate(`/resume/${uuid}`);
-
     }
 
 
