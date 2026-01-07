@@ -21,33 +21,34 @@ const Resume = () => {
   useEffect(()=>{
       if(!isLoading && !auth.isAuthenticated) navigate(`/auth?next=/resume/${id}`)
     },[isLoading])
-  
-  
 
-  useEffect(()=>{
-    const loadResume= async()=>{
-      const resume=await kv.get(`resume:${id}`);
+
+  useEffect(() => {
+    const loadResume = async () => {
+      const resume = await kv.get(`resume:${id}`);
+
       if(!resume) return;
 
-      const data= JSON.parse(resume);
+      const data = JSON.parse(resume);
 
-      const resumeBlob= await fs.read(data.resumePath);
+      const resumeBlob = await fs.read(data.resumePath);
       if(!resumeBlob) return;
 
-      const pdfBlob= new Blob([resumeBlob],{type:'application/pdf'})
-      const resumeUrl= URL.createObjectURL(pdfBlob);
+      const pdfBlob = new Blob([resumeBlob], { type: 'application/pdf' });
+      const resumeUrl = URL.createObjectURL(pdfBlob);
       setResumeUrl(resumeUrl);
 
-      const imageBlob= await fs.read(data.imagePath);
+      const imageBlob = await fs.read(data.imagePath);
       if(!imageBlob) return;
-      const imageUrl= URL.createObjectURL(imageBlob);
-      setResumeUrl(imageUrl);
+      const imageUrl = URL.createObjectURL(imageBlob);
+      setImageUrl(imageUrl);
 
       setFeedback(data.feedback);
-      console.log({resumeUrl,imageUrl,feedback:data.feedback})
+      console.log({resumeUrl, imageUrl, feedback: data.feedback });
     }
+
     loadResume();
-  },[id])
+  }, [id]);
   return(
       <main className="!pt-0">
         <nav className="resume-nav">
@@ -72,14 +73,14 @@ const Resume = () => {
           </section>
           <section className="feedback-section">
             <h2 className="text-4xl !text-black font-bold">Resume Review</h2>
-            {feedback ?(
-             <div className="flex flex-col gap-8 animate-in fade-in duration-1000">
-              <Summary feedback={feedback} />
-              <ATS score={feedback.ATS.score || 0} suggestions={feedback.padStart.tips || []}/>
-              <Details feedback={feedback} />
-              </div>
-            ):(
-              <img src="/images/resume-scan-2.gif" className="w-full"/>
+            {feedback ? (
+                <div className="flex flex-col gap-8 animate-in fade-in duration-1000">
+                  <Summary feedback={feedback} />
+                  <ATS score={feedback.ATS.score || 0} suggestions={feedback.ATS.tips || []} />
+                  <Details feedback={feedback} />
+                </div> 
+            ) : (
+                <img src="/images/resume-scan-2.gif" className="w-full" />
             )}
           </section>
         </div>
